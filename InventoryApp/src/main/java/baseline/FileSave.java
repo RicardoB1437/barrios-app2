@@ -13,14 +13,14 @@ public class FileSave
         {
             FileWriter writer = new FileWriter(fileName);
 
-            writer.write("Serial Number    Name    Value\n");
+            writer.write("Serial Number\tName\tValue\n");
 
             for(int i=0;i<items.size();i++)
             {
                 String name = items.get(i).getName();
                 String serialNumber = items.get(i).getSerialNumber();
                 String value = Double.toString(items.get(i).getValue());
-                writer.write(serialNumber + "    " + name + "    " + value + "\n");
+                writer.write(serialNumber + "\t" + name + "\t" + value + "\n");
             }
             writer.close();
         }

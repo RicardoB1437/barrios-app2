@@ -37,7 +37,7 @@ public class FileParse
         for (int i=1;i<fileLines.size();i++)
         {
             s = fileLines.get(i);
-            String[] arr = s.split("    ");
+            String[] arr = s.split("\t");
             String serialNumber = arr[0];
 
             String name = arr[1];
