@@ -93,14 +93,29 @@ public class InventoryManagementPageController {
     void deleteItem(ActionEvent event) {
         ManagementHelper helper = new ManagementHelper();
         int selectedIdx = listView.getSelectionModel().getSelectedIndex();
-        listView.getItems().remove(selectedIdx);
-        this.itemList = helper.deleteItemFunction(selectedIdx, this.itemList);
+
+        Item removeItem = listView.getItems().get(selectedIdx);
+        listView.getItems().remove(removeItem);
+        this.itemList = helper.deleteItemFunction(removeItem, this.itemList);
+        if(!searchTextField.getText().isEmpty())
+            this.searchedItemList = helper.deleteItemFunction(removeItem, this.searchedItemList);
     }
 
     @FXML
     void deleteAll(ActionEvent event) {
         ManagementHelper helper = new ManagementHelper();
         //remove all items from list / observable list
+        //search list case
+        if(!searchTextField.getText().isEmpty())
+        {
+            this.searchedItemList = helper.deleteAllSearchItemsFunction(searchTextField.getText(), this.searchedItemList);
+            listView.getItems().clear();
+        }
+        else
+        {
+            this.itemList = helper.deleteAllItemsFunction(this.itemList);
+            listView.getItems().clear();
+        }
         this.itemList = helper.deleteAllItemsFunction(this.itemList);
         listView.getItems().clear();
     }
@@ -203,35 +218,73 @@ public class InventoryManagementPageController {
         searchTextField.clear();
     }
 
-    public void radioButtonChanged()
+    @FXML
+    public void radioButtonChanged(ActionEvent event)
     {
         ManagementHelper helper = new ManagementHelper();
         List<Item> filterItems;
         //changes the contents of the filter list and pushes the changes to the gui list view
-        if(SortGroup.getSelectedToggle().equals(this.nameSortButton))
+        //handles the sorting with search value
+        if(!searchTextField.getText().isEmpty())
         {
-            filterItems = helper.sortByName(itemList);
-            this.observableItems.clear();
-            this.observableItems.addAll(filterItems);
-            listView.getItems().clear();
-            listView.getItems().addAll(this.observableItems);
+            search(event);
+            if(SortGroup.getSelectedToggle().equals(this.nameSortButton))
+            {
+                filterItems = helper.sortByName(searchedItemList);
+                this.observableItems.clear();
+                this.observableItems.addAll(filterItems);
+                listView.getItems().clear();
+                listView.getItems().addAll(this.observableItems);
+            }
+            if(SortGroup.getSelectedToggle().equals(this.valueSortButton))
+            {
+                filterItems = helper.sortByValue(searchedItemList);
+                this.observableItems.clear();
+                this.observableItems.addAll(filterItems);
+                listView.getItems().clear();
+                listView.getItems().addAll(this.observableItems);
+            }
+            if(SortGroup.getSelectedToggle().equals(this.serialSortButton))
+            {
+                filterItems = helper.sortBySerial(searchedItemList);
+                this.observableItems.clear();
+                this.observableItems.addAll(filterItems);
+                listView.getItems().clear();
+                listView.getItems().addAll(this.observableItems);
+            }
         }
-        if(SortGroup.getSelectedToggle().equals(this.valueSortButton))
+        else
         {
-            filterItems = helper.sortByValue(itemList);
-            this.observableItems.clear();
-            this.observableItems.addAll(filterItems);
-            listView.getItems().clear();
-            listView.getItems().addAll(this.observableItems);
+            if(SortGroup.getSelectedToggle().equals(this.nameSortButton))
+            {
+                filterItems = helper.sortByName(itemList);
+                this.observableItems.clear();
+                this.observableItems.addAll(filterItems);
+                listView.getItems().clear();
+                listView.getItems().addAll(this.observableItems);
+            }
+            if(SortGroup.getSelectedToggle().equals(this.valueSortButton))
+            {
+                filterItems = helper.sortByValue(itemList);
+                this.observableItems.clear();
+                this.observableItems.addAll(filterItems);
+                listView.getItems().clear();
+                listView.getItems().addAll(this.observableItems);
+            }
+            if(SortGroup.getSelectedToggle().equals(this.serialSortButton))
+            {
+                filterItems = helper.sortBySerial(itemList);
+                this.observableItems.clear();
+                this.observableItems.addAll(filterItems);
+                listView.getItems().clear();
+                listView.getItems().addAll(this.observableItems);
+            }
         }
-        if(SortGroup.getSelectedToggle().equals(this.serialSortButton))
-        {
-            filterItems = helper.sortBySerial(itemList);
-            this.observableItems.clear();
-            this.observableItems.addAll(filterItems);
-            listView.getItems().clear();
-            listView.getItems().addAll(this.observableItems);
-        }
+    }
+
+    public void sortHelper(List<Item> tempItems)
+    {
+
     }
 
     @FXML

@@ -120,10 +120,20 @@ public class ManagementHelper
         items.removeAll(items);
         return items;
     }
-
-    public List<Item> deleteItemFunction(int id, List<Item> items)
+    public List<Item> deleteAllSearchItemsFunction(String searchString, List<Item> items)
     {
-        items.remove(id);
+        //simply remove items from list and then remove items from list view
+        for(int i=0;i<items.size();i++)
+        {
+            if(items.get(i).getName().equals(searchString) || items.get(i).getSerialNumber().equals(searchString))
+                items.remove(i);
+        }
+        return items;
+    }
+
+    public List<Item> deleteItemFunction(Item removeItem, List<Item> items)
+    {
+        items.remove(removeItem);
         return items;
     }
 
