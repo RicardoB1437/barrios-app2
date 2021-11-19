@@ -1,0 +1,49 @@
+@startuml
+
+class InventoryManagementApplication
+{
+    +start(Stage)
+    +main(String[])
+    'calls launch() which calls start
+    'shows the stage
+}
+
+class InventoryManagementPageController
+{
+    +deleteAllItems(ActionEvent)
+    +deleteItem(ActionEvent)
+    +addItem(ActionEvent)
+    -editItem(ActionEvent)
+    +loadFile(ActionEvent)
+    +saveFile(ActionEvent)
+    +initialize()
+}
+
+class ManagementHelper
+{
+    +nameValid(String): boolean
+    +valueValid(String): boolean
+    +serialNumValid(String): boolean
+    +search(List<Item>, String): List<Item>
+    +sortByName(List<Item>): List<Item>
+    +sortByValue(List<Item>): List<Item>
+    +sortBySerial(List<Item>): List<Item>
+}
+
+class FileParse
+{
+    +loadFile(String): ArrayList<Item>
+    -convertFileToList(List<String>): ArrayList<Item>
+}
+
+class FileSave
+{
+    +saveFile(String, List<Item>)
+}
+
+InventoryManagementApplication -- InventoryManagementPageController
+InventoryManagementPageController --* Item
+InventoryManagementPageController --* FileSave
+InventoryManagementPageController --* FileParse
+
+@enduml
