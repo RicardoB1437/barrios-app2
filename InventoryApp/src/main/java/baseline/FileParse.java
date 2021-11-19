@@ -38,9 +38,9 @@ public class FileParse
         {
             s = fileLines.get(i);
             String[] arr = s.split("    ");
-            String name = arr[0];
+            String serialNumber = arr[0];
 
-            String serialNumber = arr[1];
+            String name = arr[1];
 
             String value = arr[2];
             double valueNum = Double.parseDouble(value);

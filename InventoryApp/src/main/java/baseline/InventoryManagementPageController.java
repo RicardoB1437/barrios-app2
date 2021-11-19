@@ -1,16 +1,27 @@
 package baseline;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SplitMenuButton;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.stage.FileChooser;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InventoryManagementPageController {
 
+    @FXML
+    private ToggleGroup SortGroup;
+    @FXML
+    private RadioButton nameSortButton;
+    @FXML
+    private RadioButton valueSortButton;
+    @FXML
+    private RadioButton serialSortButton;
     @FXML
     private Button addItemButton;
     @FXML
@@ -18,7 +29,7 @@ public class InventoryManagementPageController {
     @FXML
     private Label errLabel;
     @FXML
-    private ListView<?> listView;
+    private ListView<Item> listView;
     @FXML
     private Button loadFileButton;
     @FXML
@@ -42,71 +53,200 @@ public class InventoryManagementPageController {
     @FXML
     private TextField valueTextField;
 
+    private List<Item> itemList = new ArrayList<>();
+    private List<Item> searchedItemList = new ArrayList<>();
+    @FXML
+    ObservableList<Item> observableItems = FXCollections.observableArrayList(itemList);
+
     @FXML
     void addItem(ActionEvent event) {
-        //create instance of helper class
-        //take the information from the 3 fields and check if inputs are valid
-        //if valid then create instance and add it to the list
-        //else display error message
-        //if(!nameValid) setText to invalid name
-        //if(!valueValid) setText to invalid value
-        //if(!serialValid) setText to invalid serial num
-        //clear all fields
+        ManagementHelper helper = new ManagementHelper();
+
+        String name = nameTextField.getText();
+        String serialNum = serialNumTextField.getText();
+        String value = valueTextField.getText();
+
+
+        if(helper.nameValid(name) && helper.serialNumValid(itemList, serialNum) && helper.valueValid(value))
+        {
+            Item newItem = new Item(serialNum, name, Double.parseDouble(value));
+
+            helper.addItemFunction(itemList, serialNum, name, Double.parseDouble(value));
+            listView.getItems().add(newItem);
+            errLabel.setText("");
+            nameTextField.clear();
+            serialNumTextField.clear();
+            valueTextField.clear();
+        }
+        else
+        {
+            if(!helper.nameValid(name))
+                errLabel.setText("Invalid name");
+            if(!helper.serialNumValid(itemList, serialNum))
+                errLabel.setText("Invalid serial number");
+            if(!helper.valueValid(value))
+                errLabel.setText("Invalid value");
+        }
     }
 
     @FXML
     void deleteItem(ActionEvent event) {
-        //get the current selection id
-        //delete the current selection from the list and observable list
+        ManagementHelper helper = new ManagementHelper();
+        int selectedIdx = listView.getSelectionModel().getSelectedIndex();
+        listView.getItems().remove(selectedIdx);
+        this.itemList = helper.deleteItemFunction(selectedIdx, this.itemList);
     }
 
     @FXML
     void deleteAll(ActionEvent event) {
+        ManagementHelper helper = new ManagementHelper();
         //remove all items from list / observable list
+        this.itemList = helper.deleteAllItemsFunction(this.itemList);
+        listView.getItems().clear();
     }
 
     @FXML
-    void editItem(ActionEvent event)
+    private void editItem(ActionEvent event)
     {
-        //take the information in the fields and replace the information in the selected item
+        ManagementHelper helper = new ManagementHelper();
+        int selectedIdx = listView.getSelectionModel().getSelectedIndex();
+
+        String name = nameTextField.getText();
+        String serialNum = serialNumTextField.getText();
+        String value = valueTextField.getText();
+        Item newItem = new Item(serialNum, name, Double.parseDouble(value));
+
+        if(helper.nameValid(name) && helper.serialNumValid(itemList, serialNum) && helper.valueValid(value))
+        {
+            itemList = helper.editItemFunction(selectedIdx, itemList, serialNum, name, Double.parseDouble(value));
+            listView.getItems().set(selectedIdx, newItem);
+            errLabel.setText("");
+            nameTextField.clear();
+            serialNumTextField.clear();
+            valueTextField.clear();
+        }
+        else
+        {
+            if(!helper.nameValid(name))
+                errLabel.setText("Invalid name");
+            if(!helper.serialNumValid(itemList, serialNum))
+                errLabel.setText("Invalid serial number");
+            if(!helper.valueValid(value))
+                errLabel.setText("Invalid value");
+        }
     }
 
     @FXML
     void loadFile(ActionEvent event) {
-        //create instance of file loader class
-        //call load file function from file loader class
-        //update gui with new information
+        FileParse fp = new FileParse();
+        FileChooser fc = new FileChooser();
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("text files", "*.txt"));
+        File f = fc.showOpenDialog(null);
+
+        ArrayList<Item> tempList;
+        if(f != null)
+        {
+            tempList = fp.loadFile(f.getAbsolutePath());
+            updateGui(tempList);
+            errLabel.setText("");
+            System.out.println(f.getAbsolutePath());
+        }
+        else
+        {
+            errLabel.setText("Invalid File");
+        }
+    }
+
+    //load list helper function
+    private void updateGui(List<Item> tempItems)
+    {
+        this.itemList = tempItems;
+        this.observableItems.clear();
+        this.observableItems.addAll(tempItems);
+        listView.getItems().clear();
+        listView.getItems().addAll(this.observableItems);
     }
 
     @FXML
     void saveFile(ActionEvent event) {
-        //create instance of file saver class
-        //call save file function from loader class
+        FileSave fs = new FileSave();
+        FileChooser fc = new FileChooser();
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("text files", "*.txt"));
+        File f = fc.showSaveDialog(null);
+        try
+        {
+            fs.saveFile(f.getAbsolutePath(), this.itemList);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     void search(ActionEvent event) {
-        //create instance of helper function class
-        //take the string from the search text field
-        //loop through the list and find the string and display it
+        ManagementHelper helper = new ManagementHelper();
+
+        String str = searchTextField.getText();
+        searchedItemList = helper.search(itemList, str);
+
+        this.observableItems.clear();
+        this.observableItems.addAll(searchedItemList);
+        listView.getItems().clear();
+        listView.getItems().addAll(this.observableItems);
     }
 
     @FXML
-    void sortByName(ActionEvent event) {
-        //create instance of helper function class
-        //sort list alphabetically
+    void reset(ActionEvent event)
+    {
+        updateGui(itemList);
+        searchTextField.clear();
+    }
+
+    public void radioButtonChanged()
+    {
+        ManagementHelper helper = new ManagementHelper();
+        List<Item> filterItems;
+        //changes the contents of the filter list and pushes the changes to the gui list view
+        if(SortGroup.getSelectedToggle().equals(this.nameSortButton))
+        {
+            filterItems = helper.sortByName(itemList);
+            this.observableItems.clear();
+            this.observableItems.addAll(filterItems);
+            listView.getItems().clear();
+            listView.getItems().addAll(this.observableItems);
+        }
+        if(SortGroup.getSelectedToggle().equals(this.valueSortButton))
+        {
+            filterItems = helper.sortByValue(itemList);
+            this.observableItems.clear();
+            this.observableItems.addAll(filterItems);
+            listView.getItems().clear();
+            listView.getItems().addAll(this.observableItems);
+        }
+        if(SortGroup.getSelectedToggle().equals(this.serialSortButton))
+        {
+            filterItems = helper.sortBySerial(itemList);
+            this.observableItems.clear();
+            this.observableItems.addAll(filterItems);
+            listView.getItems().clear();
+            listView.getItems().addAll(this.observableItems);
+        }
     }
 
     @FXML
-    void sortBySerialNum(ActionEvent event) {
-        //create instance of helper function class
-        //sort ascending by ascii value i assume
-    }
+    public void initialize()
+    {
+        listView.getItems().addAll(observableItems);
+        errLabel.setText("");
 
-    @FXML
-    void sortByValue(ActionEvent event) {
-        //create instance of helper function class
-        //sort ascending by value
+        //handles the initialization of the filters
+        SortGroup = new ToggleGroup();
+        this.nameSortButton.setToggleGroup(SortGroup);
+        this.valueSortButton.setToggleGroup(SortGroup);
+        this.serialSortButton.setToggleGroup(SortGroup);
+        this.nameSortButton.setSelected(true);
+        this.nameSortButton.requestFocus();
     }
 
 }
