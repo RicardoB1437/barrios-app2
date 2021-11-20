@@ -15,7 +15,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="baseline.InventoryManagementPageController">
    <children>
       <SplitPane dividerPositions="0.11872909698996656" layoutX="139.0" layoutY="40.0" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -60,7 +59,9 @@
                               <ContextMenu>
                                 <items>
                                   <MenuItem mnemonicParsing="false" onAction="#deleteItem" text="Delete Item" />
-                                    <MenuItem mnemonicParsing="false" onAction="#editItem" text="Edit Item" />
+                                    <MenuItem mnemonicParsing="false" onAction="#editName" text="Edit Name" />
+                                    <MenuItem mnemonicParsing="false" onAction="#editSerialNumber" text="Edit Serial Number" />
+                                    <MenuItem mnemonicParsing="false" onAction="#editValue" text="Edit Value" />
                                 </items>
                               </ContextMenu>
                            </contextMenu>

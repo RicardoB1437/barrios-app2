@@ -1,7 +1,6 @@
 package baseline;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -92,7 +91,6 @@ public class ManagementHelper
             if(items.get(i).getName().equals(searchString) || items.get(i).getSerialNumber().equals(searchString))
                 tempList.add(items.get(i));
         }
-        //return the list
         return tempList;
     }
 
@@ -120,15 +118,11 @@ public class ManagementHelper
         items.removeAll(items);
         return items;
     }
-    public List<Item> deleteAllSearchItemsFunction(String searchString, List<Item> items)
+    public List<Item> deleteAllSearchItemsFunction(List<Item> searchItems, List<Item> allItems)
     {
-        //simply remove items from list and then remove items from list view
-        for(int i=0;i<items.size();i++)
-        {
-            if(items.get(i).getName().equals(searchString) || items.get(i).getSerialNumber().equals(searchString))
-                items.remove(i);
-        }
-        return items;
+        //removes list 1 from list 2
+        allItems.removeAll(searchItems);
+        return allItems;
     }
 
     public List<Item> deleteItemFunction(Item removeItem, List<Item> items)
@@ -144,10 +138,27 @@ public class ManagementHelper
         return items;
     }
 
-    public List<Item> editItemFunction(int index, List<Item> items, String serialNum, String name, double value)
+    public List<Item> editNameFunction(List<Item> items, Item oldItem, String newName)
     {
-        Item replaceItem = new Item(serialNum, name, value);
-        items.set(index, replaceItem);
+        Item newItem = new Item(oldItem.getSerialNumber(), newName, oldItem.getValue());
+        int idx = items.indexOf(oldItem);
+        items.set(idx, newItem);
+        return items;
+    }
+
+    public List<Item> editSerialNumberFunction(List<Item> items, Item oldItem, String newSerial)
+    {
+        Item newItem = new Item(newSerial, oldItem.getName(), oldItem.getValue());
+        int idx = items.indexOf(oldItem);
+        items.set(idx, newItem);
+        return items;
+    }
+
+    public List<Item> editValueFunction(List<Item> items, Item oldItem, double newValue)
+    {
+        Item newItem = new Item(oldItem.getSerialNumber(), oldItem.getName(), newValue);
+        int idx = items.indexOf(oldItem);
+        items.set(idx, newItem);
         return items;
     }
 }

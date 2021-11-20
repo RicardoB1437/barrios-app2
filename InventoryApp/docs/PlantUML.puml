@@ -1,5 +1,17 @@
 @startuml
 
+class Item
+{
+    +String name
+    +String serialNumber
+    +double value
+
+    +getName(): String
+    +getSerialNumber(): String
+    +getValue(): double
+    +toString(): String
+}
+
 class InventoryManagementApplication
 {
     +start(Stage)
@@ -10,12 +22,21 @@ class InventoryManagementApplication
 
 class InventoryManagementPageController
 {
-    +deleteAllItems(ActionEvent)
-    +deleteItem(ActionEvent)
-    +addItem(ActionEvent)
-    -editItem(ActionEvent)
-    +loadFile(ActionEvent)
-    +saveFile(ActionEvent)
+    -List<Item> itemList
+    -List<Item> searchedItemList
+
+    -addItem(ActionEvent)
+    -deleteItem(ActionEvent)
+    -deleteAll(ActionEvent)
+    -editName(ActionEvent)
+    -editSerialNumber(ActionEvent)
+    -editValue(ActionEvent)
+    -loadFile(ActionEvent)
+    -updateGui(List<Item>)
+    -saveFile(ActionEvent)
+    -search(ActionEvent)
+    -reset(ActionEvent)
+    -radioButtonChanged(ActionEvent)
     +initialize()
 }
 
@@ -28,6 +49,13 @@ class ManagementHelper
     +sortByName(List<Item>): List<Item>
     +sortByValue(List<Item>): List<Item>
     +sortBySerial(List<Item>): List<Item>
+    +deleteAllItemsFunction(List<Item>):List<Item>
+    +deleteAllItemsSearchFunction(List<Item>, List<Item>): List<Item>
+    +deleteItemFunction(Item, List<Item>): List<Item>
+    +addItemFunction(List<Item>, String, String, double): List<Item>
+    +editNameFunction(List<Item>, Item, String): List<Item>
+    +editSerialNumberFunction(List<Item>, Item, String): List<Item>
+    +editValueFunction(List<Item>, Item, double): List<Item>
 }
 
 class FileParse
@@ -43,7 +71,8 @@ class FileSave
 
 InventoryManagementApplication -- InventoryManagementPageController
 InventoryManagementPageController --* Item
-InventoryManagementPageController --* FileSave
-InventoryManagementPageController --* FileParse
+InventoryManagementPageController -- ManagementHelper
+InventoryManagementPageController -- FileSave
+InventoryManagementPageController -- FileParse
 
 @enduml

@@ -1,12 +1,10 @@
 package baseline;
 
-import java.time.LocalDate;
-
 public class Item
 {
-    public String name;
-    public String serialNumber;
-    public double value;
+    private String name;
+    private String serialNumber;
+    private double value;
 
     public Item(String serialNumber, String name, double value)
     {
