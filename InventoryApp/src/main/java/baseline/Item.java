@@ -25,6 +25,6 @@ public class Item
 
     public String toString()
     {
-        return String.format("Name: %s\nSerial Number: %s\nValue: %s", getName(), getSerialNumber(), getValue());
+        return String.format("Name: %s\nSerial Number: %s\nValue: $%s", getName(), getSerialNumber(), getValue());
     }
 }

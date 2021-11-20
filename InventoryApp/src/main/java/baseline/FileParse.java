@@ -40,7 +40,7 @@ public class FileParse
 
             String name = arr[1];
 
-            String value = arr[2];
+            String value = arr[2].replace("$", "");
             double valueNum = Double.parseDouble(value);
 
             Item newItem = new Item(serialNumber, name, valueNum);

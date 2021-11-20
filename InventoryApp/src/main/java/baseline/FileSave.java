@@ -19,7 +19,7 @@ public class FileSave
                 String name = items.get(i).getName();
                 String serialNumber = items.get(i).getSerialNumber();
                 String value = Double.toString(items.get(i).getValue());
-                writer.write(serialNumber + "\t" + name + "\t" + value + "\n");
+                writer.write(serialNumber + "\t" + name + "\t$" + value + "\n");
             }
             writer.close();
         }
